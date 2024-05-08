@@ -10,7 +10,7 @@ class Application extends FoundationApplication
   protected $environmentPath = __DIR__ . '/../../../';
 
   /** @inheritdoc */
-  protected $databasePath = __DIR__ . '/../database/';
+  protected $databasePath = __DIR__ . '/database/';
 
   /** @inheritdoc */
   protected $configPath = __DIR__ . '/config/';
