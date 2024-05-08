@@ -1,0 +1,49 @@
+services:
+  database:
+    restart: always
+    container_name: database
+    image: postgres:15.6-alpine3.19
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_HOST_AUTH_METHOD: trust
+      TZ: America/Sao_Paulo
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - :5432
+    networks:
+      - application
+
+  php:
+    restart: always
+    container_name: php
+    build:
+      context: .
+      dockerfile: devops/Dockerfile.php
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - database
+    networks:
+      - application
+
+  nginx:
+    restart: always
+    container_name: nginx
+    image: nginx:1.26-alpine3.19
+    volumes:
+      - .:/var/www/html
+      - ./devops/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 8008:80
+    depends_on:
+      - php
+      - database
+    networks:
+      - application
+
+networks:
+  application:
+    driver: bridge
